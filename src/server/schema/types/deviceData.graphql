@@ -1,5 +1,6 @@
 type DeviceInfo {
     name: String!
-    user_email: String!
+    userEmail: String!
     version: String!
+    updatedDate: String
 }
