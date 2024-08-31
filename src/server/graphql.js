@@ -1,18 +1,34 @@
 import express from "express";
-import { ApolloServer, gql } from "apollo-server-express";
+import { ApolloServer } from "apollo-server-express";
+import { loadSchemaSync } from '@graphql-tools/load';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { resolve, join, normalize } from 'path';
+import { fileURLToPath } from 'url';
+
 import { connection } from "./connection.js";
-import { typeDefs } from './schema.js';
 
 const port = 4000;
 
 export async function serveGraphQl() {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = resolve(__filename, '..');
+
+  const schemaPath = normalize(join(__dirname, './schema/types/**/*.graphql'));
+
+  const typeDefs = loadSchemaSync(schemaPath, {
+    loaders: [new GraphQLFileLoader()]
+  });
+
   const resolvers = {
     Query: {
-      devices: () => connection.raw("select name from devices"),
+      devices: () => connection.raw("select * from devices"),
     },
   };
 
-  const server = new ApolloServer({ typeDefs, resolvers });
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+  const server = new ApolloServer({ schema });
   await server.start();
 
   const app = express();
