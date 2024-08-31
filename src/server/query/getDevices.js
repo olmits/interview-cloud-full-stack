@@ -1,3 +1,5 @@
 export const getDevices = async (_, args, { dataSources }) => {
-    return dataSources.deviceDataSource.getDevices();
+    const { pagination } = args.input;
+    
+    return dataSources.deviceDataSource.getDevices(pagination);
 };

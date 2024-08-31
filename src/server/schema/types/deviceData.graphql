@@ -1,5 +1,5 @@
 type DeviceInfo {
     name: String!
     user_email: String!
-    firmware_version_id: Int!
+    version: String!
 }
