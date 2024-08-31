@@ -7,6 +7,8 @@ import { resolve, join, normalize } from 'path';
 import { fileURLToPath } from 'url';
 
 import { resolvers } from "./resolver.js";
+import { connection } from "./connection.js";
+import DeviceDataSource from "./dataSources/DeviceDataSource.js";
 
 const port = 4000;
 
@@ -22,7 +24,12 @@ export async function serveGraphQl() {
 
   const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-  const server = new ApolloServer({ schema });
+  const server = new ApolloServer({
+    schema,
+    dataSources: () => ({
+      deviceDataSource: new DeviceDataSource(connection),
+    })
+  });
   await server.start();
 
   const app = express();

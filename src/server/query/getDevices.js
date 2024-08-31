@@ -1,5 +1,3 @@
-import { connection } from "../connection.js";
-
-export const getDevices = async (_, args, context) => {
-    return connection.raw("select * from devices");
+export const getDevices = async (_, args, { dataSources }) => {
+    return dataSources.deviceDataSource.getDevices();
 };
