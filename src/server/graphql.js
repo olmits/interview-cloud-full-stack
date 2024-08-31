@@ -6,7 +6,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { resolve, join, normalize } from 'path';
 import { fileURLToPath } from 'url';
 
-import { connection } from "./connection.js";
+import { resolvers } from "./resolver.js";
 
 const port = 4000;
 
@@ -19,12 +19,6 @@ export async function serveGraphQl() {
   const typeDefs = loadSchemaSync(schemaPath, {
     loaders: [new GraphQLFileLoader()]
   });
-
-  const resolvers = {
-    Query: {
-      devices: () => connection.raw("select * from devices"),
-    },
-  };
 
   const schema = makeExecutableSchema({ typeDefs, resolvers });
 
