@@ -7,8 +7,8 @@ import { resolve, join, normalize } from 'path';
 import { fileURLToPath } from 'url';
 
 import { resolvers } from "./resolver.js";
-import { connection } from "./connection.js";
-import DeviceDataSource from "./dataSources/DeviceDataSource.js";
+import { connection } from "./db/connection.js";
+import DeviceDataSource from "./db/DeviceDataSource.js";
 
 const port = 4000;
 

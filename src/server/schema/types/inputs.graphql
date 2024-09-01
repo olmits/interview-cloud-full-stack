@@ -3,6 +3,12 @@ input Pagination {
     limit: Int!
 }
 
+input Order {
+    orderBy: String!
+    orderDirection: String!
+}
+
 input GetDevicesInput {
     pagination: Pagination!
+    order: Order!
 }

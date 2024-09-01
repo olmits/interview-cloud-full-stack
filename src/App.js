@@ -5,21 +5,12 @@ import {
   Loader,
   Popup,
 } from 'semantic-ui-react'
+import { useQuery } from '@apollo/client';
+
 import { DataTable } from './components/DataTable'
 import { Pagination } from './components/Pagination'
-import { gql, useQuery } from '@apollo/client';
-
-const GET_DEVICES_QUERY = gql`
-  query GetDevices($input: GetDevicesInput!) {
-    getDevices(input: $input) {
-      id
-      name
-      userEmail
-      version
-      updatedDate
-    }
-  }
-`;
+import { PAGE_SIZES } from './helpers/constants';
+import { GET_DEVICES_QUERY } from './helpers/queries';
 
 const UpToDateIcon = () => {
   const icon = <Icon name="checkmark" color="green" />;
@@ -43,7 +34,7 @@ const columns = [
     collapsing: true
   },
   {
-    id: 'user',
+    id: 'userEmail',
     header: 'User',
     render: (row) => (
       <>
@@ -64,41 +55,43 @@ const columns = [
     render: (row) => row.version,
   },
   {
-    id: 'updated',
+    id: 'updatedDate',
     header: 'Last Updated',
     render: (row) => row.updatedDate,
   },
 ];
 
-const PAGE_SIZES = [10, 25, 50]
-
 
 function App() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(PAGE_SIZES[0]);
+  const [order, setOrder] = useState({ orderBy: 'name', orderDirection: 'asc' });
 
-  const { data } = useQuery(GET_DEVICES_QUERY, {
+  const { data, loading } = useQuery(GET_DEVICES_QUERY, {
     variables: {
       input: {
         pagination: {
           offset: (page - 1) * perPage,
           limit: perPage,
         },
+        order,
       },
     },
   });
 
+  if (loading) return <Loader active size="large" />
+
   return (
     <DataTable
-      data={data?.getDevices || []}
-      sortBy="user"
+      data={data.getDevices.results || []}
+      sortBy="name"
       columns={columns}
       sort={(columnId) => console.log({ columnId })}
       header={<Header>Devices to Update</Header>}
       footer={
         <Pagination
           current={page}
-          total={2}
+          total={Math.ceil(data.getDevices.total / perPage) || 0}
           size={perPage}
           sizes={PAGE_SIZES}
           setCurrent={setPage}

@@ -5,3 +5,8 @@ type DeviceInfo {
     version: String!
     updatedDate: String
 }
+
+type GetDevicesResponse {
+    results: [DeviceInfo!]!
+    total: Int!
+}
