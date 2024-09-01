@@ -8,6 +8,7 @@ import { useQuery } from '@apollo/client';
 import { DataTable } from './components/DataTable'
 import { Pagination } from './components/Pagination'
 import {
+  UpToDateIcon,
   UnauthorizedUserIcon,
   UpdateInProgressIcon,
 } from './components/icons';
@@ -18,7 +19,10 @@ import useTable from './hooks/useTable';
 const columns = [
   {
     id: 'status',
-    render: (row) => row.iconExample && <UpdateInProgressIcon />,
+    render: (row) => {
+      if (!row.updatedDate) return <UpdateInProgressIcon />;
+      if (row.isLatestVersion) return <UpToDateIcon />;
+    },
     collapsing: true
   },
   {
@@ -45,7 +49,13 @@ const columns = [
   {
     id: 'updatedDate',
     header: 'Last Updated',
-    render: (row) => row.updatedDate,
+    render: (row) => {
+      if (!row.updatedDate) return "";
+      const updatedDate = new Date(row.updatedDate);
+      const todayDate = new Date();
+      if (updatedDate.toDateString() === todayDate.toDateString()) return "Today";
+      return updatedDate.toLocaleDateString("en-US");
+    },
   },
 ];
 
@@ -78,6 +88,8 @@ function App() {
 
   if (loading) return <Loader active size="large" />
   if (error) return <Message error header={error.message} />
+
+  console.log("asdf", data.getDevices.results);
 
   return (
     <DataTable

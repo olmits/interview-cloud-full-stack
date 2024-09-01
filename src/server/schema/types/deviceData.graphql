@@ -5,7 +5,7 @@ type DeviceInfo {
     userEmail: String!
     version: String!
     updatedDate: String
-    subscriptionEnds: String
+    isLatestVersion: Boolean!
 }
 
 type GetDevicesResponse {

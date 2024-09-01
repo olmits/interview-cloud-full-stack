@@ -10,7 +10,7 @@ export const GET_DEVICES_QUERY = gql`
         isAdmin
         version
         updatedDate
-        subscriptionEnds
+        isLatestVersion
       }
       total
     }
