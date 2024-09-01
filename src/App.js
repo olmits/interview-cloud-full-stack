@@ -71,6 +71,8 @@ function App() {
     handeleSetOrder
   } = useTable();
 
+  console.log("asdf", orderBy, orderDirection);
+
   const { data, error, loading } = useQuery(GET_DEVICES_QUERY, {
     variables: {
       input: {

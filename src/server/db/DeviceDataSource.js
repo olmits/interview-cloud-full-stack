@@ -6,10 +6,14 @@ class DeviceDataSource extends SQLDataSource {
         const { orderBy, orderDirection } = order;
 
         const orderByMapping = {
-            name: "devices.name",
-            userEmail: "devices.user_email",
-            version: this.knex.raw("fv.major || '.' || fv.minor || '.' || fv.patch"),
-            updatedDate: "latest_updates.most_recent_finished"
+            name: [{ column: "devices.name", order: orderDirection }],
+            userEmail: [{ column: "devices.user_email", order: orderDirection }],
+            version: [
+                { column: "versions.major", order: orderDirection },
+                { column: "versions.minor", order: orderDirection },
+                { column: "versions.patch", order: orderDirection },
+            ],
+            updatedDate: [{ column: "latest_updates.most_recent_finished", order: orderDirection }],
         };
 
         const orderByField = orderByMapping[orderBy] || orderByMapping.name;
@@ -46,7 +50,7 @@ class DeviceDataSource extends SQLDataSource {
                     END as isLatestVersion
                 `)
             )
-            .orderBy(orderByField, orderDirection)
+            .orderBy(orderByField)
             .offset(offset)
             .limit(limit);
 
