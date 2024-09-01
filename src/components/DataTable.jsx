@@ -1,5 +1,6 @@
 import React from "react";
 import { Table } from "semantic-ui-react";
+import { SORT_DIRECTION_MAPPER } from "../helpers/constants";
 
 export const DataTable = (props) => (
   <Table sortable celled>
@@ -16,7 +17,7 @@ export const DataTable = (props) => (
           <Table.HeaderCell
             key={column.id}
             sorted={
-              props.sortBy.columnId === column.id ? "ascending" : undefined
+              props.sortBy === column.id ? SORT_DIRECTION_MAPPER[props.sortDirection] :undefined
             }
             onClick={() => props.sort(column.id)}
             collapsing={column.collapsing}

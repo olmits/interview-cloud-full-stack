@@ -7,8 +7,10 @@ export const GET_DEVICES_QUERY = gql`
         id
         name
         userEmail
+        isAdmin
         version
         updatedDate
+        subscriptionEnds
       }
       total
     }

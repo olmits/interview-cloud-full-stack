@@ -1,31 +1,19 @@
-import { useState } from 'react';
 import {
   Header,
-  Icon,
   Loader,
-  Popup,
+  Message,
 } from 'semantic-ui-react'
 import { useQuery } from '@apollo/client';
 
 import { DataTable } from './components/DataTable'
 import { Pagination } from './components/Pagination'
+import {
+  UnauthorizedUserIcon,
+  UpdateInProgressIcon,
+} from './components/icons';
 import { PAGE_SIZES } from './helpers/constants';
 import { GET_DEVICES_QUERY } from './helpers/queries';
-
-const UpToDateIcon = () => {
-  const icon = <Icon name="checkmark" color="green" />;
-  return <Popup content="Up to Date" trigger={icon} />;
-};
-
-const UpdateInProgressIcon = () => {
-  const icon = <Loader active inline size="tiny" />;
-  return <Popup content="Update In Progress" trigger={icon} />;
-}
-
-const UnauthorizedUserIcon = () => {
-  const icon = <Icon name="warning sign" color="yellow" />;
-  return <Popup content="Not Authorized" trigger={icon} />;
-}
+import useTable from './hooks/useTable';
 
 const columns = [
   {
@@ -40,7 +28,7 @@ const columns = [
       <>
         {row.userEmail}
         &nbsp;
-        {row.iconExample && <UnauthorizedUserIcon />}
+        {!row.isAdmin && <UnauthorizedUserIcon />}
       </>
     ),
   },
@@ -63,30 +51,41 @@ const columns = [
 
 
 function App() {
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(PAGE_SIZES[0]);
-  const [order, setOrder] = useState({ orderBy: 'name', orderDirection: 'asc' });
+  const {
+    page,
+    perPage,
+    orderBy,
+    orderDirection,
+    handleSetPage,
+    handleSetPerPage,
+    handeleSetOrder
+  } = useTable();
 
-  const { data, loading } = useQuery(GET_DEVICES_QUERY, {
+  const { data, error, loading } = useQuery(GET_DEVICES_QUERY, {
     variables: {
       input: {
         pagination: {
           offset: (page - 1) * perPage,
           limit: perPage,
         },
-        order,
+        order: {
+          orderBy,
+          orderDirection
+        },
       },
     },
   });
 
   if (loading) return <Loader active size="large" />
+  if (error) return <Message error header={error.message} />
 
   return (
     <DataTable
       data={data.getDevices.results || []}
-      sortBy="name"
+      sortBy={orderBy}
+      sortDirection={orderDirection}
       columns={columns}
-      sort={(columnId) => console.log({ columnId })}
+      sort={handeleSetOrder}
       header={<Header>Devices to Update</Header>}
       footer={
         <Pagination
@@ -94,8 +93,8 @@ function App() {
           total={Math.ceil(data.getDevices.total / perPage) || 0}
           size={perPage}
           sizes={PAGE_SIZES}
-          setCurrent={setPage}
-          setSize={setPerPage}
+          setCurrent={handleSetPage}
+          setSize={handleSetPerPage}
         />
       }
     />

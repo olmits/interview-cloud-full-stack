@@ -4,8 +4,8 @@ input Pagination {
 }
 
 input Order {
-    orderBy: String!
-    orderDirection: String!
+    orderBy: String
+    orderDirection: String
 }
 
 input GetDevicesInput {

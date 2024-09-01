@@ -1,9 +1,11 @@
 type DeviceInfo {
     id: Int!
+    isAdmin: Boolean!
     name: String!
     userEmail: String!
     version: String!
     updatedDate: String
+    subscriptionEnds: String
 }
 
 type GetDevicesResponse {

@@ -1,4 +1,5 @@
 import { SQLDataSource } from "datasource-sql";
+import knex from "knex";
 
 class DeviceDataSource extends SQLDataSource {
     async getDevices(pagination, order) {
@@ -28,12 +29,15 @@ class DeviceDataSource extends SQLDataSource {
                 "=",
                 "latest_updates.device_id"
             )
+            .where("users.subscription_ends", '>=', this.knex.fn.now())
             .select(
                 "devices.id as id",
                 "devices.name as name",
                 "devices.user_email as userEmail",
+                "users.admin as isAdmin",
                 this.knex.raw("fv.major || '.' || fv.minor || '.' || fv.patch as version"),
-                "latest_updates.most_recent_finished as updatedDate"
+                "latest_updates.most_recent_finished as updatedDate",
+                "users.subscription_ends as subscriptionEnds"
             )
             .orderBy(orderByField, orderDirection)
             .offset(offset)
@@ -41,6 +45,8 @@ class DeviceDataSource extends SQLDataSource {
 
         const totalCountResult = await this.knex
             .from("devices")
+            .join("users", "devices.user_email", "=", "users.email")
+            .where("users.subscription_ends", '>=', this.knex.fn.now())
             .count("devices.id as total");
 
         return {
