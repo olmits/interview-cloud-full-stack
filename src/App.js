@@ -71,8 +71,6 @@ function App() {
     handeleSetOrder
   } = useTable();
 
-  console.log("asdf", orderBy, orderDirection);
-
   const { data, error, loading } = useQuery(GET_DEVICES_QUERY, {
     variables: {
       input: {
@@ -88,10 +86,9 @@ function App() {
     },
   });
 
-  if (loading) return <Loader active size="large" />
-  if (error) return <Message error header={error.message} />
+  if (loading) return <Loader active size="large" />;
 
-  console.log("asdf", data.getDevices.results);
+  if (error) return <Message error header={error.message} />;
 
   return (
     <DataTable

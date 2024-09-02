@@ -8,12 +8,16 @@ class DeviceDataSource extends SQLDataSource {
         const orderByMapping = {
             name: [{ column: "devices.name", order: orderDirection }],
             userEmail: [{ column: "devices.user_email", order: orderDirection }],
+            updatedDate: [{ column: "latest_updates.most_recent_finished", order: orderDirection }],
             version: [
                 { column: "versions.major", order: orderDirection },
                 { column: "versions.minor", order: orderDirection },
                 { column: "versions.patch", order: orderDirection },
             ],
-            updatedDate: [{ column: "latest_updates.most_recent_finished", order: orderDirection }],
+            status: [
+                { column: "isLatestVersion", order: orderDirection },
+                { column: "isUpdateInProgress", order: orderDirection }
+            ],
         };
 
         const orderByField = orderByMapping[orderBy] || orderByMapping.name;
@@ -45,9 +49,17 @@ class DeviceDataSource extends SQLDataSource {
                         WHEN versions.major = (SELECT MAX(fv.major) FROM firmware_versions fv)
                             AND versions.minor = (SELECT MAX(fv.minor) FROM firmware_versions fv WHERE fv.major = versions.major)
                             AND versions.patch = (SELECT MAX(fv.patch) FROM firmware_versions fv WHERE fv.major = versions.major AND fv.minor = versions.minor)
+                            AND latest_updates.most_recent_finished IS NOT NULL
                         THEN TRUE
                         ELSE FALSE
                     END as isLatestVersion
+                `),
+                this.knex.raw(`
+                    CASE
+                        WHEN latest_updates.most_recent_finished IS NULL
+                        THEN TRUE
+                        ELSE FALSE
+                    END as isUpdateInProgress
                 `)
             )
             .orderBy(orderByField)
