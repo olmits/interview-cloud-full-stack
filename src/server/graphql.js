@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import { resolvers } from "./resolver.js";
 import { connection } from "./db/connection.js";
 import DeviceDataSource from "./db/DeviceDataSource.js";
+import { formatError } from "./utils/formatters.js";
 
 const port = 4000;
 
@@ -28,7 +29,8 @@ export async function serveGraphQl() {
     schema,
     dataSources: () => ({
       deviceDataSource: new DeviceDataSource(connection),
-    })
+    }),
+    formatError,
   });
   await server.start();
 
