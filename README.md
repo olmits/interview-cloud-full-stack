@@ -7,4 +7,35 @@
 
 # Your Documentation
 
-Goes here :)
+
+### Project structure
+
+    .
+    ├── src
+    │   ├── components          # Frontend UI dummy components
+    │   ├── helpers             # Frontend helper functions, constants, queries, etc.
+    │   ├── hooks               # React hooks to encapsulate certain business logic
+    │   ├── server              # Backend - Apollo server graphql server
+    │   │   ├── db              # Databese connector and Apollo server data sources
+    │   │   ├── query           # Graphql query functions
+    │   │   ├── schema          # Graphql shemas and shema helpers
+    │   │   │   └── types       # Graphql shema types
+    │   │   │
+    │   │   ├── sql             # SQL dump files for Sqlite3 database
+    │   │   ├── utils           # Backend helper functions, constants, formatters, etc.
+    │   │   ├── graphql.js      # Core module to initiate Apollo server
+    │   │   └── index.js
+    │   │   
+    │   ├── App.js              # Main frontend container to render the Table
+    │   └── index.js
+    │
+    └── ...
+
+### Project details
+
+Node version:
+> v20.5.1
+
+Some additional deps have been added.
+`@graphql-tools/graphql-file-loader`, `@graphql-tools/load` and `@graphql-tools/schema` allow us to organize GraphQL schemas and type definitions into separate modules.
+`datasource-sql` simplifies integrating SQL queries into GraphQL.
